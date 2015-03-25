@@ -1,0 +1,53 @@
+{% include "includes/_header.html" %}
+
+	<div class="signin-form">
+		<div class="well">
+			<div class="cutomers-tittle">
+				<h1>Sign Up</h1>
+			</div>
+			{% block mainContent %}
+				{% block message %}
+					<div class="alert alert-error">
+						<button data-dismiss="alert" class="close" type="button">&times;</button>
+						Password will be automatically generated and send your email
+						{% if form.errors %}
+							Oops! Something went wrong. Please try again!
+						{%endif%}
+					</div>
+				{% endblock %}
+	
+				{% if user.is_authenticated %}
+					<div class="alert alert-error">You don't have permission to do this action</div>
+				{%else%}                                        
+					<form  action="." id="frmSingup" name="frmSingup" method="post">{% csrf_token %}
+						<input type="text" name="username" id="username" placeholder="Enter email">
+						<input class="controls" type="text" name="first_name" id="first_name" placeholder="Enter firstname">
+						<input class="controls" type="text" name="last_name" id="last_name" placeholder="Enter lastname">
+						<button type="submit" class="add-customer" name="signin">Sign Up</button>
+						{% if next == '' %}
+			    			<input type="hidden" name="next" value="/" />
+	    				{% else %}
+			    			<input type="hidden" name="next" value="{{ next }}" />
+		    			{% endif %}
+		    			<span>or</span>  
+						<a href="/login" title="Login">Login</a>
+					</form>
+				{%endif%}
+			{% endblock %}
+		</div>
+	</div>
+	<script src="{{ STATIC_URL }}js/placeholder.js"></script>
+{% include "includes/_footer.html" %}
+<script>
+    $(document).ready(function () {
+        $('#frmSingup').validate({ // initialize the plugin
+            rules: {
+            	username: {
+                    required: true,
+                    email:true
+                }
+            }
+        });
+	
+    });
+</script>

@@ -1,0 +1,127 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/door/list" class="active">List All</a></li>
+			<li><a href="/admin/door/create">Add new</a></li>		  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+		<div class="row-fluid">
+			
+			<div class="span12">  
+			    <div class="cutomers-tittle">
+		    		<a class="add-customer" href="/admin/door/create/" title="Add Door">
+						<i class="icon-plus"></i>Add Door
+					</a>
+			      	<h1>Doors List</h1>
+			      	{% if messages %}
+			    {% for message in messages %}
+				    <div class="alert alert-block">
+				    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+				    	{{ message }}
+				    </div>
+			    {% endfor %}
+			{% endif %}
+		       	</div>
+	  		</div> 
+		</div> 
+		{% if DoorsList %}
+			<div class="customers-table">
+				<table class="table">
+		  			<thead>
+			  			<th>{{ form.door_name.label }}</th>
+			  			<th>{{ form.door_price.label }}</th>
+			  			<th>{{ form.estimated_time.label }}</th>
+			  			<th>{{ form.description.label }}</th>
+			  			<th>Colors</th>
+			  			<th>&nbsp;</th>
+		  			</thead>
+		  			<tbody>
+					{% for door in DoorsList.object_list %}
+						<tr>
+					  		<td>{{ door.door_name|title }}</td>
+					  		<td>${{ door.door_price|title }}</td>
+					  		<td>{{ door.estimated_time|title }}</td>
+					  		<td>{{ door.description|title }}</td>
+					  		{% if DoorColorList %}
+						  		<td>
+						  		{% for color in DoorColorList %}
+						  			{% if color.door_id == door.door_id %}
+						  				[{{ color.color_code|title }}]&nbsp;
+						  			{% endif %}
+						  			
+						  		{% endfor %}
+						  		</td>
+					  		{% endif %}
+					  		<td>
+					  			<a class="edit" href="/admin/door/edit/{{door.door_id}}" title="Edit"></a>
+					  			<a class="remove" href="/admin/door/delete/{{door.door_id}}" title="Delete" onclick="return deleteDoor();"></a>
+					  		</td>
+	  					</tr>
+		  			{% endfor %}
+		  			</tbody>
+				</table>
+			</div> 
+			<div class="pagination pagination-right">
+			    <ul>
+			        {% if DoorsList.has_previous %}
+			          <li class="previous-page">  <a href="?page={{ DoorsList.previous_page_number }}">
+			          		<i class="icon-arrow-prev"></i></a>
+			          </li>
+			        {% endif %}
+           			<li class="disabled"> <a>Page {{ DoorsList.number }} of {{ DoorsList.paginator.num_pages }}</a></li> 
+			        {% if DoorsList.has_next %}
+			           <li class="next-page"> <a href="?page={{ DoorsList.next_page_number }}">
+			           		<i class="icon-arrow-next"></i></a>
+			           </li>
+			        {% endif %}
+			    </ul>
+			</div>
+		{% else %}
+				<div class="alert alert-info">
+					No Doors found. Add one <a title="Add Door" href="/admin/door/create/">now</a>
+				</div>
+		{% endif %}
+	</div>
+	{%endblock%}
+
+{% include "includes/_footer.html" %}
+
+<script type="text/javascript">
+
+
+
+	function deleteDoor()
+	{
+		if (confirm("This item will be permanently deleted and cannot be recovered. Are you sure?") == true)
+			{
+			 return true;
+			}
+		else
+			{
+			 return false;
+			}
+	}  
+	
+
+	$(document).ready(function(){ 
+							   
+			$("#droppable-door ul").sortable({ opacity: 0.6, cursor: 'move', update: function() {
+				var order = $(this).sortable("serialize") + '&action=updateRecordsListings'; 
+				$.post("/door/listDoors", order, function(theResponse){
+					// $("#contentRight").html(theResponse);
+				}); 															 
+			}								  
+			});
+	
+	});	
+</script>

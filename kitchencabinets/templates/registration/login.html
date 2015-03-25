@@ -1,0 +1,53 @@
+{% include "includes/_header.html" %}
+
+         <div class="signin-form">
+                <div class="well">
+                        <div class="cutomers-tittle">
+                                <h1>Login</h1>
+                        </div>
+                        {% block mainContent %}
+                                {% block message %}
+                                        {% if form.errors %}
+                                        <div class="alert alert-error">
+                                                <button data-dismiss="alert" class="close" type="button">&times;</button>
+                                                Sorry, that's not a valid username or password
+                                        </div>
+                                        {% endif %}
+                                {% endblock %}
+
+                                {% if user.is_authenticated %}
+                                        <div class="alert alert-error">You don't have permission to do this action</div>
+                                {%else%}                                        <form  action="." id="frmLogin" name="frmLogin" method="post">{% csrf_token %}
+                                                <input type="text" name="username" id="username" placeholder="Enter email">
+                                                <input class="controls" type="password" name="password" id="password" placeholder="Enter Password" onpaste="return false">
+                                                <button type="submit" class="add-customer" name="signin">Sign in</button>
+                                                {% if next == '' %}
+                                                <input type="hidden" name="next" value="/" />
+                                        {% else %}
+                                                <input type="hidden" name="next" value="{{ next }}" />
+                                        {% endif %}
+                                        	&nbsp;<a href="/accounts/forgot-password/" title="Forgot Password">Forgot Password</a>
+                                        </form>
+                                {%endif%}
+                        {% endblock %}
+                </div>
+        </div>
+<script src="{{ STATIC_URL }}js/placeholder.js"></script>
+{% include "includes/_footer.html" %}
+<script>
+    $(document).ready(function () {
+        $('#frmLogin').validate({ // initialize the plugin
+            rules: {
+            	username: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true,
+//                    minlength:6
+                }
+            }
+        });
+	
+    });
+</script>

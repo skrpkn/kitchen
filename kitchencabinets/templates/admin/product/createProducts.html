@@ -1,0 +1,715 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/product/list" title="product">List All</a></li>
+			<li><a href="/admin/product/create" class="active">Add new</a></li>		  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+	
+		<div class="cutomers-tittle form-title">
+			<h1>{% if flag %} Edit {%else%}Add {% endif %} Product</h1>
+			{% if messages %}
+			    {% for message in messages %}
+			    <div class="alert alert-block">
+			    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+			    	{{ message }}
+			    </div>
+			    {% endfor %}
+			{% endif %}
+		</div>
+		<div class="row-fluid">
+			<div class="span8">
+				<form class="form-horizontal" action="." id="frmcreateProduct" name="frmcreateProduct" enctype="multipart/form-data" method="post">{% csrf_token %}
+				 	
+				 	<div class="control-group">
+						<label for="cabinet" class="control-label">{{ form_product.cabinet.label}}<span>*</span></label>
+						<div class="controls">
+							<select name="cabinet" id="cabinet">
+								<option value="">Select a Cabinet Type</option>
+								<option value="Standard Base Cabinet" 
+								{% if cabinet == "Standard Base Cabinet" %}selected="selected"{% endif %}>Standard Base Cabinet</option>
+								<option value="Corner Cabinet"
+								{% if cabinet == "Corner Cabinet" %}selected="selected"{% endif %}
+								>Corner Cabinet</option>
+							</select>
+						</div>
+					</div>
+					
+				 	<div class="control-group">
+						<label for="category" class="control-label">{{ form_product.materials.label}}<span>*</span></label>
+						<div class="controls">
+							<select name="material" id="material_name">
+								<option value="">Select a Material</option>
+								{% if listAllMaterials %}
+									{% for material in listAllMaterials %}
+										<option value="{{material.id}}"
+											{% if material_id == material.id %}selected="selected"{% endif %}>
+										{{ material.name|title }}&nbsp; ${{material.price}}</option>
+									{% endfor %}
+								{% endif %}
+							</select>
+						</div>
+					</div>
+					
+				 	<div class="control-group">
+						<label for="category" class="control-label">{{ form_product.category.label}}<span>*</span></label>
+						<div class="controls">
+							<select name="category_name" id="category_name">
+								<option value="">Select a Category</option>
+								{% if listAllCategory %}
+									{% for catList in listAllCategory %}
+										<option value="{{catList.id}}"
+											{% if category_id == catList.id %}selected="selected"{% endif %}>
+										{{ catList.category_name|title }}</option>
+									{% endfor %}
+								{% endif %}
+							</select>
+							<img alt="Please wait" src="{{ STATIC_URL }}img/ajaxloader.gif" class="hide" id="ajax-loader">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="sub_category">{{ form_product.sub_category.label}}</label>
+						<div class="controls">
+							<select name="sub_category_name" id="sub_category_name" {% if subcategoryCount == 0	%} disabled=true	{% endif	%}>
+								<option value="">Select Subcategory </option>
+								 {% if subcategoryCount > 0	%}
+								 	{% for subCatList in SubCategoriesList %}
+										<option value="{{subCatList.id}}"
+										{% if sub_category_id == subCatList.id %}selected="selected"{% endif %}>
+										{{ subCatList.sub_category_name|title }}</option>
+									{% endfor %} 
+								{% endif %}
+							</select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="product_name" class="control-label">{{ form_product.product_name.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form_product.product_name }}
+						</div>
+					</div>
+<!--					<div class="control-group">-->
+<!--						<label for="product_code" class="control-label">{{ form_product.product_code.label}}</label>-->
+<!--						<div class="controls">-->
+<!--							{{ form_product.product_code }}-->
+<!--						</div>-->
+<!--					</div>-->
+					<div class="control-group">
+						<label class="control-label" for="short_description">{{ form_product.short_description.label}}</label>
+						<div class="controls">
+							{{ form_product.short_description }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="descriptions">{{ form_product.descriptions.label}}</label>
+						<div class="controls">
+							{{ form_product.descriptions }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="product_price">{{ form_product.product_price.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form_product.product_price }}
+						</div>
+					</div>
+					{% if listAllCabinets %}
+						<h6>Cabinet Construction</h6>
+						{% for cabinets in listAllCabinets %}
+							<div class="control-group">
+							<label>
+
+								{% if cabinets.cabinet_construction.cabinet_name %}
+									{{cabinets.cabinet_construction.cabinet_name|title}}
+								{% else%}
+									{{cabinets.cabinet_name|title}}
+								{% endif %}
+							</label>
+								
+								<div class="controls">
+									<input type="hidden" name="cabinetid{{ forloop.counter0 }}" 
+											value={% if cabinets.cabinet_construction.id %}
+												{{cabinets.cabinet_construction.id}}
+													{% else%}
+												{{cabinets.id}}
+												{% endif %}
+												>
+								</div>
+								<div class="controls">
+									<input type="text" name="cabinet_size{{ forloop.counter0 }}" value={{cabinets.size}}>
+								</div>
+							</div>
+						{% endfor %}
+					{% endif %}
+					
+					<div class="control-group">
+						<label for="category" class="control-label">{{ form_product.tax.label}}<span>*</span></label>
+						<div class="controls">
+							<select multiple name="tax_name" id="tax_name" class="multiple">
+								{% if listAllTax %}
+	 								{% for single in listAllTax %}
+	 									
+										<option value="
+											{% if single.tax.id %}
+												{{ single.tax.id }}
+											{% else%}
+												{{ single.id }}
+											{% endif %}
+										" {% if single.tax.id %}
+											selected="selected"
+											{% endif %}>
+											
+											{% if single.tax.tax_name %}
+												{{ single.tax.tax_name|title }}
+											{% else%}
+												{{ single.tax_name|title }}
+											{% endif %}
+											&nbsp;(
+											{% if single.tax.tax_rate %}
+												{{single.tax.tax_rate}}
+											{% else%}
+												{{single.tax_rate}}
+											{% endif %}%)
+										</option> 
+									{% endfor %}
+								{% endif %}
+							</select>
+						</div>
+						
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="min_height">{{ form_product.min_height.label}}<span>*</span></label>
+						<div class="controls">
+						{{ form_product.min_height }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="max_height">{{ form_product.max_height.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form_product.max_height }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="height_scale">{{ form_product.height_scale.label}}</label>
+						<div class="controls">
+							{{ form_product.height_scale }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="min_width">{{ form_product.min_width.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form_product.min_width }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="max_width">{{ form_product.max_width.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form_product.max_width }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="width_scale">{{ form_product.width_scale.label}}</label>
+						<div class="controls">
+							{{ form_product.width_scale }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="min_depth">{{ form_product.min_depth.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form_product.min_depth }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="max_depth">{{ form_product.max_depth.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form_product.max_depth }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="depth_scale">{{ form_product.depth_scale.label}}</label>
+						<div class="controls">
+							{{ form_product.depth_scale }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="depth_scale">{{ form_product.discount.label}}</label>
+						<div class="controls">
+							{{ form_product.discount }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="product_video">{{ form_product.is_custom.label}}</label>
+						<div class="controls">
+							<div class="spacer">
+								<input type="radio" name="is_custom" value="Yes" 
+									{% if is_custom == 'Yes' %} 
+										checked="checked" 
+									{% endif %} 
+									> Yes
+							</div>
+							<div class="spacer">
+								<input type="radio" name="is_custom" value="No"
+									{% if is_custom == 'No' %} 
+										checked="checked" 
+									{% endif %} 
+									> No
+							</div>	
+						</div>
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label" for="product_video">{{ form_product.video.label}}</label>
+						<div class="controls">
+							{{ form_product.video}}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Is Hinge</label>
+						<div class="controls">
+							<div class="spacer">
+								<input type="radio" name="is_hinges" value="Yes" 
+									{% if hinge and hinge == 'Yes' %} 
+										checked="checked" 
+									{% endif %} 
+									> Yes
+							</div>
+							<div class="spacer">
+								<input type="radio" name="is_hinges" value="No"
+									{% if hinge and hinge == 'No' %} 
+										checked="checked" 
+									{% endif %} 
+									> No
+							</div>
+						</div>		
+					</div>
+			
+					<div class="sub-controls clearfix {% if hinge and hinge == 'No' %} 
+								hide
+							{% endif %} " id="is_hinges">
+						{% if listAllHinges %}
+						<div class="sub-elements-rows">	
+								<div class="sub-elements">	
+									<label class="label-title">{{ form_hinges.hinges_name.label }}</label>
+					 			</div>
+							<div class="sub-elements">	
+					  				<label class="label-title">{{ form_product_hinges.hinges_min.label }}</label>
+					  			</div>
+								
+					 			<div class="sub-elements">	
+					  				<label class="label-title">{{ form_product_hinges.hinges_max.label }}</label>
+					  			</div>
+					  			
+					  		</div>
+						
+					  		{% if listAllHinges.count != 0 %}
+					  			{% for hingeList in listAllHinges %}
+					  				<div class="sub-elements-rows clearfix">	
+					  					
+					  					<div class="sub-elements">
+					  					 
+											<input type="hidden" name="hingesid{{ forloop.counter0 }}" value=
+											{% if hingeList.hinges.id %}
+												{{hingeList.hinges.id}}
+											{% else%}
+												{{hingeList.id}}
+											{% endif %}
+										>
+											
+											<label>
+											{% if hingeList.hinges.hinges_name %}
+												{{hingeList.hinges.hinges_name|title}}
+											{% else%}
+												{{hingeList.hinges_name|title}}
+											{% endif %}
+											</label>
+										</div>
+								    	
+										<div class="sub-elements">
+										 		
+											<input type="text" name="hingesmin{{ forloop.counter0 }}"  value={{hingeList.hinges_min}}>
+										</div>
+								    	
+								    	
+										<div class="sub-elements">
+												
+											<input type="text" name="hingesmax{{ forloop.counter0 }}"  value={{hingeList.hinges_max}}>
+								    	</div>
+										
+								    </div>
+								{% endfor %}	
+							{% endif %}
+						{% endif %}
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label">Is Drawer</label>
+						<div class="controls">
+							<div class="spacer">
+							<input type="radio" name="is_drawer" value="Yes" 
+								{% if drawer and drawer == 'Yes' %} 
+									checked="checked" 
+								{% endif %} 
+								> Yes
+								</div>
+								<div class="spacer">
+						<input type="radio" name="is_drawer" value="No"
+							{% if drawer and drawer == 'No' %} 
+								checked="checked" 
+							{% endif %} 
+							> No</div>
+						</div> 
+					</div>
+					<div class="sub-controls clearfix {% if drawer and drawer == 'No' %} 
+								hide
+							{% endif %} " id="is_drawer">
+						{% if listAllDrawers %}
+						<div class="sub-elements-rows">
+						<div class="sub-elements">	
+				 			<label class="label-title">{{ form_drawer.drawer_name.label }}</label>
+				 			</div>
+				 			<div class="sub-elements">	
+				  			<label class="label-title">{{ form_product_drawer.product_drawers_quantity.label }}</label>
+				  			</div>
+				  			</div>
+				  			
+					  		{% if listAllDrawers.count != 0 %}
+					  			{% for drawerList in listAllDrawers %}
+									<div class="sub-elements-rows clearfix">
+									<div class="sub-elements">	
+										<input type="hidden" name="drawerid{{ forloop.counter0 }}" value=
+										{% if drawerList.drawer.id %}
+											{{drawerList.drawer.id}}
+										{% else%}
+											{{drawerList.id}}
+										{% endif %}
+										>
+										<label>
+										{% if drawerList.drawer.drawer_name %}
+											{{drawerList.drawer.drawer_name|title}}
+										{% else%}
+											{{drawerList.drawer_name|title}}
+										{% endif %}
+										</label>
+									</div>
+										<div class="sub-elements">	
+											<input type="text" name="drawerqty{{ forloop.counter0 }}"  value={{drawerList.product_drawers_quantity}}>
+										</div>
+									</div>
+								{% endfor %}	
+							{% endif %}
+						{% endif %}
+					</div>
+					
+					<div class="control-group">
+						<label class="control-label">Is Door</label>
+						<div class="controls">
+							<div class="spacer">
+							<input type="radio" name="is_door" value="Yes" 
+								{% if door and door == 'Yes' %} 
+									checked="checked" 
+								{% endif %} 
+								> Yes
+							</div>
+							<div class="spacer">
+							<input type="radio" name="is_door" value="No"
+								{% if door and door == 'No' %} 
+									checked="checked" 
+								{% endif %} 
+								> No
+								</div>
+						</div> 
+					</div> 
+					
+					<div class="sub-controls clearfix {% if door and door == 'No' %} 
+								hide
+							{% endif %}" id="is_door">
+						{% if listAllDoors %}
+							<div class="sub-elements-rows">	
+								<div class="sub-elements">	
+									<label class="label-title">{{ form_door.door_name.label}}</label>
+								</div>
+							
+								<div class="sub-elements">	
+						  			<label class="label-title">	{{ form_product_doors.pieces_count.label }}</label>
+					  			</div>
+				  			</div>
+				  			{% if listAllDoors.count != 0 %}
+								
+								
+								{% for doorList in listAllDoors %}
+									<div class="sub-elements-rows clearfix">
+									<div class="sub-elements">	
+									<input type="hidden" name="doorid{{ forloop.counter0 }}" value=
+										{% if doorList.door_id %}
+											{{doorList.door_id}}
+										{% else%} 
+											{{doorList.id}}
+										{% endif %}
+										>
+									<label>
+										{% if doorList.door.door_name %}
+											{{doorList.door.door_name|title}}
+										{% else%}
+											{{doorList.door_name|title}}
+										{% endif %}
+									</label>
+									</div>
+									<div class="sub-elements">
+									<input type="text" name="pieces_count{{ forloop.counter0 }}" value={{doorList.pieces_count}}>
+									</div>
+									</div>
+								{% endfor %}	
+							{% endif %}
+						{% endif %}
+						</div>
+					
+					
+					
+					
+					
+					<span class="row-fluid" id="add_more_photos">
+						{% if flag %}
+							{% if product_images_count > 0 %}
+								<ul class="thumbnails">
+									{% for image in product_images %}
+										<li class="span3" id="photo_group_{{image.id}}">
+											<img data-src="{{ image.image_path }}/260x180" src="{{ image.image_path }}" name="photo_{{forloop.counter}}" id="photo_{{forloop.counter}}">
+											{% if image.description %}
+												<p>{{image.description}}</p>
+											{% endif %}
+											<a class="remove delete_photo" rel="{{image.id}}" href="javascript:void(0);" title="Delete"></a>
+										</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						{% endif %}
+						<input type="hidden" name="count" id="count" value="0"/>
+					</span>
+					
+					<div class="control-group">
+						<label>Product Photos</label>
+						<div class="controls">&nbsp;</div>
+					</div>
+					
+					
+					<!--   start here multiple selection of photo  -->
+					<div class="control-group" id="add_photo_group">
+						<label></label>
+						<div class="controls">
+							<a href="javascript:void(0);" id="add_photo" alt="Upload image" title="Upload image">Add Image</a>
+						</div>
+					</div>
+					<!--   end here multiple selection of photo  -->
+					<div class="control-group">
+						<label></label>
+						<div class="controls">
+							<button type="submit" class="add-customer">Save</button>
+							<span>or</span> 
+							<a href="/admin/product/list" title="Back to listing">Back</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% endblock %}
+
+{% include "includes/_footer.html" %}
+
+
+<script>
+var intId = 1;
+//starting the script for adding multiple colors
+{% if product_images_count > 0 %}
+	intId = {{product_images_count}}+1;
+	
+{% endif %}
+	var isActive = false;		
+
+    $(document).ready(function () {
+    	// subcategory filer
+    	$("#category_name").change(function(){
+    		$("#ajax-loader").removeClass('hide');
+    		var options = '<option value="">Select Subcategory </option>';
+    		// if default
+    		if($(this).val() == ""){
+    			$("#ajax-loader").addClass('hide');
+    			$("#sub_category_name").html(options);
+    			$("#sub_category_name").attr('disabled', true);
+    		}else{
+        		// load subcategories
+    	      $.getJSON("/admin/subcategory/filter/"+$(this).val()+"/", function(j) {
+    	    	
+    	        if(j.length > 0){	
+	    	        for (var i = 0; i < j.length; i++) {
+	    	          options += '<option value="' + parseInt(j[i].pk) + '">' + j[i].fields['sub_category_name'] + '</option>';
+	    	        }
+	    	        $("#sub_category_name").attr('disabled', false);
+    	      	}else{
+    	      		$("#sub_category_name").attr('disabled', true);
+    	      	}
+    	        $("#sub_category_name").html(options);
+    	        $("#ajax-loader").addClass('hide');
+    	      })
+    	      $("#sub_category_name").attr('selected', 'selected');
+    		}
+    	      
+   	    })
+    	
+    	$("input[name$='is_drawer']").click(function() {
+            var val = $(this).val();
+            if(val == 'Yes')
+            	{
+            	$("div#is_drawer").show('slow');
+            	}
+            else
+            	{
+            	$("div#is_drawer").hide('slow');
+            	}
+        });
+    	$("input[name$='is_hinges']").click(function() {
+            var val = $(this).val();
+            if(val == 'Yes')
+            	{
+            	$("div#is_hinges").show('slow');
+            	}
+            else
+            	{
+            	$("div#is_hinges").hide('slow');
+            	}
+        });
+    	$("input[name$='is_door']").click(function() {
+            var door_val = $(this).val();
+            if(door_val == 'Yes')
+        	{
+            $("div#is_door").show('slow');
+        	}
+        else
+        	{
+        	$("div#is_door").hide('slow');
+        	}
+            
+        });
+    	
+
+    	
+    	// add colors
+        $("#add_photo").click(function() {
+        	var fieldSet = $("#add_more_photos");
+            var fieldWrapper = $("<div class=\"control-group\"/>");
+            var fName = "<label class=\"control-label\" for=\"photo\">Upload image</label>";
+            fName += "<div class=\"controls\">";
+            fName += "<input type=\"file\" name=\"photo_"+intId+"\" id=\"photo_"+intId+"\"/>";
+            fName += "</div>";
+            fName += "<label class=\"control-label\" for=\"color\">Image caption</label>";
+            fName += "<div class=\"controls\">";
+            fName += "<input type=\"text\" name=\"caption_"+intId+"\" id=\"caption_"+intId+"\" placeholder=\"Image caption\"/>";
+            fName += "</div>";
+            var removeButton = "<a href=\"javascript:void(0);\" class=\"remove remove_photo\" title=\"Remove\"></a>";
+            fieldWrapper.append(fName);
+            fieldWrapper.append(removeButton);
+            fieldSet.append(fieldWrapper);
+            $('#count').val(intId);
+            intId++;
+        });
+        // remove color
+        $(".remove_photo").live("click", function(){
+     		$(this).parent().remove();
+    	});
+
+        
+     // remove color
+        $(".delete_photo").click(function(){
+        	var id = $(this).attr('rel');
+       		$.ajax({
+       			type: "POST",
+       			url: "/admin/product/deleteImage/",
+       			data: { id: id, flag: Math.random() }
+       		}).done(function( msg ) {
+       			$('#photo_group_'+id).hide('slow');
+       		});
+
+    	});
+     
+        $('#frmcreateProduct').validate({ // initialize the plugin
+        	
+            rules: {
+            	
+            	product_name: {
+                    required: true,
+                    exactlength: 45
+                },
+                product_price: {
+                    required: true,
+                    price: true,
+                    min: 0.1
+                },
+                category_name:{
+                	required: true,
+                },
+                tax_name:{
+                	required: true,
+                },
+                min_height:{
+                	required: true,
+                	price: true,
+                	min: 0.1
+				},
+				max_height:{
+					required: true,
+                	price: true,
+                	min: 0.1
+				},
+				height_scale:{
+                	price: true
+				},
+				max_width:{
+					required: true,
+					price: true,
+					min: 0.1,
+				},
+				min_width:{
+					required: true,
+					price: true,
+					min: 0.1
+				},
+				width_scale:{
+					price: true
+				},
+				min_depth:{
+					required: true,
+					price: true,
+					min: 0.1
+				},
+				max_depth:{
+					required: true,
+					price: true,
+					min: 0.1
+				},
+				depth_scale:{
+					price: true
+				},
+                material:{
+               		required: true
+                },
+                cabinet:{
+                	required: true
+                },
+                discount:{
+                	price: true,
+                }
+				
+                
+            }
+        });
+	
+    });
+</script>

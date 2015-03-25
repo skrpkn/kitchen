@@ -1,0 +1,75 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/drawers/list">List All</a></li>
+			<li><a href="/admin/drawers/create" class="active">Add new</a></li>		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+
+		<div class="cutomers-tittle form-title">
+			<h1>{% if flag %} Edit {%else%}Add {% endif %} Drawer</h1>
+			{% if messages %}
+			    {% for message in messages %}
+			    <div class="alert alert-block">
+			    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+			    	{{ message }}
+			    </div>
+			    {% endfor %}
+			{% endif %}
+		</div>
+		<div class="row-fluid">
+			<div class="span8">
+				<form class="form-horizontal" action="." id="frmcreateDrawers" name="frmcreateDrawers" method="post">{% csrf_token %}
+					<div class="control-group">
+						<label class="control-label" for="drawer_name">{{ form.drawer_name.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form.drawer_name }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="drawer_unit_price">{{ form.drawer_unit_price.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form.drawer_unit_price }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label></label>
+						<button type="submit" class="add-customer">Save</button> 
+						<span>or</span> 
+						<a href="/admin/drawers/list/" title="Back to listing">Back</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% endblock %}
+	
+{% include "includes/_footer.html" %}
+
+
+<script>
+    $(document).ready(function () {
+        $('#frmcreateDrawers').validate({ // initialize the plugin
+            rules: {
+        		drawer_name: {
+                    required: true,
+                    exactlength: 45
+                },
+                drawer_unit_price: {
+                    required: true,
+                    price: true
+                }
+            }
+        });
+	
+    });
+</script>

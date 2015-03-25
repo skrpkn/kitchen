@@ -1,0 +1,102 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/cabinet/list" class="active">List All</a></li>
+			<li><a href="/admin/cabinet/create">Add new</a></li>	  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+	
+		<div class="row-fluid">
+			
+			<div class="span12">  
+			    <div class="cutomers-tittle">
+		    		<a class="add-customer" href="/admin/cabinet/create/" title="Add Cabinet">
+						<i class="icon-plus"></i>Add Cabinet
+					</a>
+					
+			      	<h1>Cabinet Construction List</h1>
+			      	{% if messages %}
+			    {% for message in messages %}
+				    <div class="alert alert-block">
+				    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+				    	{{ message }}
+				    </div>
+			    {% endfor %}
+			{% endif %}
+		       	</div>
+	  		</div> 
+		</div> 
+	
+		{% if cabinetsList %}
+			<div class="customers-table">
+				<table class="table">
+		  			<thead>
+			  			<th>{{ form.cabinet_name.label }}</th>
+			  			<th>&nbsp;</th>
+		  			</thead>
+		  			<tbody>
+					{% for cabinets in cabinetsList.object_list %}
+						
+							<tr>
+						  		<td>{{ cabinets.cabinet_name|title }}</td>
+						  		<td>
+						  			<a class="edit" href="/admin/cabinet/edit/{{cabinets.id}}" title="Edit"></a>
+						  			<a class="remove" href="/admin/cabinet/delete/{{cabinets.id}}" title="Delete" onclick="return deleteCabinets();"></a>
+					  			</td>
+						  	
+		  					</tr>
+		  			{% endfor %}
+		  			</tbody>
+				</table>
+			</div> 
+			<div class="pagination pagination-right">
+			    <ul>
+			        {% if cabinetsList.has_previous %}
+			          <li>  <a href="?page={{ cabinetsList.previous_page_number }}">
+			          		<i class="icon-arrow-prev"></i></a>
+			          </li>
+			        {% endif %}
+           			<li class="disabled"> <a>Page {{ cabinetsList.number }} of {{ cabinetsList.paginator.num_pages }}</a></li> 
+			        {% if cabinetsList.has_next %}
+			           <li> <a href="?page={{ cabinetsList.next_page_number }}">
+			           		<i class="icon-arrow-next"></i></a>
+			           </li>
+			        {% endif %}
+			    </ul>
+			</div>
+		{% else %}
+				<div class="alert alert-info">
+					No cabinets found. Add one <a title="Add Cabinet" href="/admin/cabinet/create/">now</a>
+				</div>
+		{% endif %}
+	{%endblock%}
+</div>
+
+
+{% include "includes/_footer.html" %}
+
+<script type="text/javascript">
+
+	function deleteCabinets()
+	{
+		if (confirm("This item will be permanently deleted and cannot be recovered. Are you sure?") == true)
+			{
+			 return true;
+			}
+		else
+			{
+			 return false;
+			}
+	}  
+	
+</script>

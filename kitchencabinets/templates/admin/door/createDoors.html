@@ -1,0 +1,147 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/door/list">List All</a></li>
+			<li><a href="/admin/door/create" class="active">Add new</a></li>		  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+	
+		<div class="cutomers-tittle form-title">
+			<h1>{% if flag %} Edit {%else%}Add {% endif %} Door</h1>
+			{% if messages %}
+			    {% for message in messages %}
+			    <div class="alert alert-block">
+			    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+			    	{{ message }}
+			    </div>
+			    {% endfor %}
+			{% endif %}
+		</div>
+		<div class="row-fluid">
+			<div class="span8">
+				<form class="form-horizontal" action="." id="frmcreateDoor"  name="frmcreateDoor" method="post">{% csrf_token %}
+					<div class="control-group">
+						<label for="door_name" class="control-label">{{ form.door_name.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form.door_name }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="door_price" class="control-label">{{ form.door_price.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form.door_price }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="estimated_time" class="control-label">{{ form.estimated_time.label}}</label>
+						<div class="controls">
+							{{ form.estimated_time }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="description" class="control-label">{{ form.description.label}}</label>
+						<div class="controls">
+							{{ form.description }}
+						</div>
+					</div>
+					<span id="add_more_colors">
+						{% if flag %}
+							{% if DoorColorCount > 0 %}
+								{% for doorColor in DoorColors %}
+									<div id="color_group_1" class="control-group">
+									<label for="color" class="control-label">Color Option</label>
+										<div class="controls">
+											<input type="text" id="color_{{forloop.counter}}" name="color_{{forloop.counter}}" value="{{doorColor.color_code}}">
+										</div>
+										<a title="Remove" class="remove remove_color" href="javascript:void(0);"></a>
+									</div>
+								{% endfor %}
+							{% endif %}
+						{% endif %}
+						<input type="hidden" name="count" id="count" value="{% if DoorColorCount > 0 %}{{DoorColorCount}}{% else %}0{% endif %}"/>
+					</span>
+					
+					<!--   start here multiple selection of colours  -->
+					<div class="control-group" id="add_color_group">
+						<label></label>
+						<div class="controls">
+							<a href="javascript:void(0);" id="add_color" alt="Add color" title="Add color">Add Color</a>
+						</div>
+					</div>
+					<!--   end here multiple selection of colours  -->
+					
+	
+					<div class="control-group">
+						<label></label>
+						<div class="controls">
+							<button type="submit" class="add-customer">Save</button>
+							<span>or</span>  
+							<a href="/admin/door/list/" title="Back to listing">Back</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% endblock %}
+{% include "includes/_footer.html" %}
+
+<script>
+var intId = 1;
+// starting the script for adding multiple colors
+{% if DoorColorCount > 0 %}
+	intId = {{DoorColorCount}}+1;
+{% endif %}
+$(document).ready(function() {
+	// add colors
+    $("#add_color").click(function() {
+    	var fieldSet = $("#add_more_colors");
+        // var intId = $("#color_form div").length + 1;
+        var fieldWrapper = $("<div class=\"control-group\" id=\"color_group_" + intId + "\"/>");
+        var fName = "<label class=\"control-label\" for=\"color\">Color Option</label>";
+        fName += "<div class=\"controls\">";
+        fName += "<input type=\"text\" name=\"color_"+intId+"\" id=\"color_"+intId+"\"/>";
+        fName += "</div>";
+        var removeButton = "<a href=\"javascript:void(0);\" class=\"remove remove_color\" title=\"Remove\"></a>";
+        fieldWrapper.append(fName);
+        fieldWrapper.append(removeButton);
+        fieldSet.append(fieldWrapper);
+        $('#count').val(intId);
+        intId++;
+    });
+    // remove color
+    $(".remove_color").live("click", function(){
+ 		$(this).parent().remove();
+	});
+    
+    $('#frmcreateDoor').validate({ // initialize the plugin
+        rules: {
+        	door_name: {
+                required: true,
+                exactlength: 45
+            },
+            door_price: {
+                required: true,
+                price: true,
+                min: 0.1
+            },
+            estimated_time: {
+                integer: true,
+            }
+            
+        }
+    });
+});
+
+//end the script for adding multiple colors
+
+</script>

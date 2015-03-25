@@ -1,0 +1,100 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/hinges/list/" class="active">List All</a></li>
+			<li><a href="/admin/hinges/create/">Add new</a></li>		  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+		<div class="row-fluid">
+			
+			<div class="span12">  
+			    <div class="cutomers-tittle">
+		    		<a class="add-customer" href="/admin/hinges/create/" title="Add Hinges">
+						<i class="icon-plus"></i>Add Hinges
+					</a>
+					
+			      	<h1>Hinges List</h1>
+			      	{% if messages %}
+			    {% for message in messages %}
+				    <div class="alert alert-block">
+				    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+				    	{{ message }}
+				    </div>
+			    {% endfor %}
+			{% endif %}
+		       	</div>
+	  		</div> 
+		</div> 
+		
+		{% if hingesList %}
+			<div class="customers-table">
+				<table class="table">
+		  			<thead>
+			  			<th>{{ form.hinges_name.label }}</th>
+			  			<th>{{ form.hinges_unit_price.label }}</th>
+			  			<th>&nbsp;</th>
+		  			</thead>
+		  			<tbody>
+					{% for hinges in hingesList.object_list %}
+						
+							<tr>
+						  		<td>{{ hinges.hinges_name|title }}</td>
+						  		<td>${{ hinges.hinges_unit_price }}</td>
+						  		<td>
+						  			<a class="edit" href="/admin/hinges/edit/{{hinges.id}}" title="Edit"></a>
+						  			<a class="remove" href="/admin/hinges/delete/{{hinges.id}}" title="Delete" onclick="return deleteHinges();"></a>
+					  			</td>
+		  					</tr>
+		  			{% endfor %}
+		  			</tbody>
+				</table>
+			</div>
+			<div class="pagination pagination-right">
+			    <ul>
+			        {% if hingesList.has_previous %}
+			          <li class="previous-page">  <a href="?page={{ hingesList.previous_page_number }}">
+			          	<i class="icon-arrow-prev"></i></a>
+			          </li>
+			        {% endif %}
+           			<li class="disabled"> <a>Page {{ hingesList.number }} of {{ hingesList.paginator.num_pages }}</a></li> 
+			        {% if hingesList.has_next %}
+			           <li class="next-page"> <a href="?page={{ hingesList.next_page_number }}">
+			           		<i class="icon-arrow-next"></i></a>
+			           </li>
+			        {% endif %}
+			    </ul>
+			</div>
+		{% else %}
+				<div class="alert alert-info">
+					No hinges found. Add one <a title="Add Hinges" href="/admin/hinges/create/">now</a>
+				</div>
+		{% endif %}
+	</div>
+	{%endblock%}
+
+{% include "includes/_footer.html" %}
+
+<script type="text/javascript">
+
+	function deleteHinges()
+	{
+		if (confirm("This item will be permanently deleted and cannot be recovered. Are you sure?") == true)
+			{
+			 return true;
+			}
+		else
+			{
+			 return false;
+			}
+	}  
+	
+</script>

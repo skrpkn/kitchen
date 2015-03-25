@@ -1,0 +1,118 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/product/list" title="product" class="active">List All</a></li>
+			<li><a href="/admin/product/create">Add new</a></li>		  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+	
+		<div class="row-fluid">
+			
+			<div class="span12">  
+			    <div class="cutomers-tittle">
+		    		<a class="add-customer" href="/admin/product/create/" title="Add Product">
+						<i class="icon-plus"></i>Add Product
+					</a>
+			      	<h1>Products List</h1>
+			      	{% if messages %}
+			    {% for message in messages %}
+				    <div class="alert alert-block">
+				    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+				    	{{ message }}
+				    </div>
+			    {% endfor %}
+			{% endif %}
+		       	</div>
+	  		</div> 
+		</div> 
+	
+		{% if ProductList %}
+			<div class="customers-table">
+		 		<table class="table">
+		  			<thead>
+		  				<th>{{ form.product_name.label }}</th>
+		  				<th>{{ form.cabinet.label }}</th>
+			  			<th>{{ form.category.label }}</th>
+			  			<th>{{ form.sub_category.label }}</th>
+			  			<th>{{ form.short_description.label }}</th>
+			  			<th>{{ form.product_price.label }}</th>
+			  			<th>&nbsp;</th>
+		  			</thead>
+		  			<tbody>
+					{% for product in ProductList.object_list %}
+						<tr>
+							<td>{{ product.product_name|truncatewords:5 }}</td>
+							<td>{{ product.cabinet|title }}</td>
+					  		<td>{{ product.category.category_name|title }}</td>
+					  		<td>{{ product.sub_category.sub_category_name|title }}</td>
+					  		<td>
+					  			{% if product.short_description %}
+					  				{{ product.short_description|truncatewords:10}}
+					  			{% else %}
+					  				{{ product.descriptions|truncatewords:10}}
+					  			{% endif %}
+					  		</td>
+					  		<td>${{ product.product_price }}</td>
+					  		
+					  		<td>
+					  			<a class="wish" href="/admin/product/view/{{product.id}}" title="View"></a>
+					  			<a class="edit" href="/admin/product/edit/{{product.id}}" title="Edit"></a>
+					  			<a class="remove" href="/admin/product/delete/{{product.id}}" title="Delete" onclick="return deleteProduct();"></a>
+				  			</td>
+	  					</tr>
+		  			{% endfor %}
+		  			</tbody>
+				</table>
+			</div>
+			<div class="pagination pagination-right">
+			    <ul>
+			        {% if ProductList.has_previous %}
+			          <li class="previous-page">  <a href="?page={{ ProductList.previous_page_number }}">
+			          	<i class="icon-arrow-prev"></i></a>
+			          </li>
+			        {% endif %}
+           			<li class="disabled"> <a>Page {{ ProductList.number }} of {{ ProductList.paginator.num_pages }}</a></li> 
+			        {% if ProductList.has_next %}
+			           <li class="next-page"> <a href="?page={{ ProductList.next_page_number }}">
+			           		<i class="icon-arrow-next"></i></a>
+			           </li>
+			        {% endif %}
+			    </ul>
+			</div>
+		{% else %}
+				<div class="alert alert-info">
+					No Products found. Add one <a title="Add Product" href="/admin/product/create/">now</a>
+				</div>
+		{% endif %}
+	</div>
+	{%endblock%}
+	
+{% include "includes/_footer.html" %}
+
+
+<script type="text/javascript">
+
+
+
+	function deleteProduct()
+	{
+		if (confirm("This product will be permanently deleted and cannot be recovered. Are you sure?") == true)
+			{
+			 return true;
+			}
+		else
+			{
+			 return false;
+			}
+	}  
+	
+</script>

@@ -1,0 +1,77 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+		   	{% if user.is_authenticated %}
+			    <div class="login-area">
+			    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+			    </div>
+			{% endif %}
+			
+		    <ul class="left-nav">
+		     	<li><a href="/admin/category/list/">List All</a></li>
+				<li><a href="/admin/category/reorder/" class="active">Reorder</a></li>
+				<li><a href="/admin/category/create/">Add new</a></li>
+		    </ul>
+		    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+		<div class="right-container pull-right">
+			<div class="row-fluid">
+				<div class="span12">  
+				    <div class="cutomers-tittle">
+			    		<a class="add-customer" href="/admin/category/create/" title="Add Category"><i class="icon-plus"></i>Add Category</a>
+				      	<h1>Manage Category Order</h1>
+				      	{% if CategoriesList %}
+					      	<div class="alert dragon-message">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								Instant drag and drop to rearrange category order
+							</div>
+						{% endif %}
+			       	</div>
+			       	{% if CategoriesList %}
+					<div class="dragon-drops">
+						<ul id="sortable">
+							{% for category in CategoriesList %}
+								<li id="recordsArray_{{ category.id }}">
+									<i class="icon-dragon"></i> 
+									{{ category.category_name|title }}
+								</li>
+							{% endfor %}
+							
+						</ul>
+					</div>
+					{% else %}
+						<div class="alert alert-info">
+							No Categories found. Add one <a title="Add Category" href="/admin/category/create/">now</a>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	{%endblock%}
+
+{% include "includes/_footer.html" %}
+
+<script type="text/javascript">
+	var isActive = false;			   
+	$(function() {
+		if(isActive)
+			return;
+		isActive = true;
+		$("#sortable").sortable({ opacity: 0.6, cursor: 'move', update: function() {
+			var order = 'flag='+Math.random()+'&order=';
+
+			id = '';
+			$(this).children('li').each(function(idx, elm) {
+				id +=(elm.id.split('_')[1]) +'~';
+			});                                     
+
+			order += id;
+			
+			$.post("/admin/category/reorder/", order, function(theResponse){
+				isActive = false;
+			}); 															 
+		}								  
+		});
+	});
+	
+</script>

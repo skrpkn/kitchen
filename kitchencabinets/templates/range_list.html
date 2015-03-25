@@ -1,0 +1,28 @@
+
+{% for val in result.itervalues %}
+	<tr>
+		<td>{{val.width}}</td>
+		<td>{{val.height}}</td>
+		<td>{{val.depth}}</td>
+		<td>{{val.price}}</td>
+		<td>
+			<form class="form-horizontal"  id="frmaddCart" name="frmaddCart" method="post" action="/product/mycart/">
+				{% csrf_token %}
+				<input type="hidden" name="cart" value="id:{{id}}#{{ forloop.counter }}~w:{{val.width}}~h:{{val.height}}~d:{{val.depth}}~p:{{val.price}}">
+				<input type="hidden" name="pn" value="{{name}}">
+				<button type="submit"  class="add-to-cart">Add To Cart</button>
+			</form>
+		</td>
+		
+	</tr>
+
+{% empty	%}
+	<tr>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+	</tr>
+{% endfor %}
+

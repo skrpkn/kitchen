@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+	<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+	<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+	<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+	<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<title>Kitchen Cabinets</title>
+		<meta name="description" content="">
+		<!--[if lt IE 9]>
+		 <script src="{{ STATIC_URL }}js/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+		<![endif]-->
+
+		
+	
+		<!-- Css -->
+	
+		 <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+		 <link href="{{ STATIC_URL }}css/responsive.css" rel="stylesheet">
+		 <link href="{{ STATIC_URL }}css/main.css" rel="stylesheet">
+	
+		<!-- Fonts -->
+		<link href='http://fonts.googleapis.com/css?family=Noto+Sans:400,400italic,700' rel='stylesheet' type='text/css'>
+		 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	</head>
+	<body>
+	
+	<!--------------------------- Header Area Start Here   -------------------------------->
+
+	<header>
+	  	<div class="container-fluid main-wrapper">
+	    	<div class="navbar navbar-inverse">
+	      		<div class="navbar-inner">
+	        		<div class="container">
+	          			<button data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar" type="button"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+	          			<a href="/" class="brand" title="Kitchen Cabinets"></a>
+	          			<div class="nav-collapse collapse">
+          					<ul class="nav header-nav pull-right">
+				          	{% if user.is_authenticated %}
+			          			<li>	
+						          	<a href="/admin/category/list/">Category<span class="caret"></span></a>
+						          	<ul>
+					  					<li><a href="/admin/category/list/">List All</a></li>
+					  					<li><a href="/admin/category/reorder/">Reorder</a></li>
+					  					<li><a href="/admin/category/create/">Add new</a></li>
+				                     </ul>
+					          	</li>
+								<li>
+	           	 					<a href="/admin/subcategory/list">Subcategory<span class="caret"></span></a>
+						  			<ul>
+						  				<li><a href="/admin/subcategory/list">List All</a></li>
+					  					<li><a href="/admin/subcategory/create">Add new</a></li>		  			
+				                    </ul>
+								</li>
+								<li>
+									<a href="/admin/cabinet/list">Cabinet<span class="caret"></span></a>
+						  			<ul>
+						  				<li><a href="/admin/cabinet/list">List All</a></li>
+					  					<li><a href="/admin/cabinet/create">Add new</a></li>		  			
+				                    </ul>
+								</li>
+								<li>
+									<a href="/admin/door/list">Doors<span class="caret"></span></a>
+						  			<ul>
+						  				<li><a href="/admin/door/list">List All</a></li>
+					  					<li><a href="/admin/door/create">Add new</a></li>		  			
+				                    </ul>
+								</li>
+					
+								<li>
+									<a href="/admin/product/list">Products<span class="caret"></span></a>
+						  			<ul>
+						  				<li><a href="/admin/product/list" title="product" >List All</a></li>
+					  					<li><a href="/admin/product/create">Add new</a></li>		  			
+				                    </ul>
+								</li>
+								<li>
+									<a href="/admin/hinges/list/">Hinges<span class="caret"></span></a>
+				  					<ul>
+					  					<li><a href="/admin/hinges/list/">List All</a></li>
+					  					<li><a href="/admin/hinges/create/">Add new</a></li>
+			                     	</ul>
+								</li>
+								<li>
+									<a href="/admin/materials/list">Materials<span class="caret"></span></a>
+						  			<ul>
+						  				<li><a href="/admin/materials/list">List All</a></li>
+					  					<li><a href="/admin/materials/create">Add new</a></li>		  			
+				                    </ul>
+								</li>
+								<li>
+									<a href="/admin/drawers/list">Drawers<span class="caret"></span></a>
+						  			<ul>
+						  				<li><a href="/admin/drawers/list">List All</a></li>
+					  					<li><a href="/admin/drawers/create">Add new</a></li>		  			
+				                    </ul>
+								</li>
+								<li>
+									<a href="/admin/tax/list">Tax<span class="caret"></span></a>
+						  			<ul>
+						  				<li><a href="/admin/tax/list">List All</a></li>
+					  					<li><a href="/admin/tax/create">Add new</a></li>		  			
+				                    </ul>
+								</li>
+							{% else %}
+								<li>
+									<a href="/signup/" title="Create account">Sign Up</a>
+								</li>
+							{% endif %}
+	          				</ul>
+	          			</div>
+	        		</div>
+	      		</div>
+	    	</div>
+	  </div>
+	  <!--------------------------- Header Area Start Here   --------------------------------> 
+	</header>
+    <div class="wrapper">

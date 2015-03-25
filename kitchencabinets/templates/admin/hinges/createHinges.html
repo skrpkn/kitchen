@@ -1,0 +1,79 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/hinges/list/">List All</a></li>
+			<li><a href="/admin/hinges/create/" class="active">Add new</a></li>		  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+
+		<div class="cutomers-tittle form-title">
+			<h1>{% if flag %} Edit {%else%}Add {% endif %} Hinges</h1>
+			{% if messages %}
+			    {% for message in messages %}
+			    <div class="alert alert-block">
+			    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+			    	{{ message }}
+			    </div>
+			    {% endfor %}
+			{% endif %}
+		</div>
+		
+		<div class="row-fluid">
+			<div class="span8">
+				<form class="form-horizontal" action="." id="frmcreateHinges" name="frmcreateHinges" method="post">{% csrf_token %}
+					<div class="control-group">
+						<label for="hinges_name" class="control-label">{{ form.hinges_name.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form.hinges_name }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="hinges_unit_price" class="control-label">{{ form.hinges_unit_price.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form.hinges_unit_price }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label></label>
+						<div class="controls">
+							<button type="submit" class="add-customer">Save</button>
+							<span>or</span>  
+							<a href="/admin/hinges/list/" title="Back to listing">Back</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% endblock %}
+{% include "includes/_footer.html" %}
+
+
+<script>
+    $(document).ready(function () {
+        $('#frmcreateHinges').validate({ // initialize the plugin
+            rules: {
+        		hinges_name: {
+                    required: true,
+                    exactlength: 45
+                },
+                hinges_unit_price: {
+                    required: true,
+                    price: true,
+                    min: 0.1
+                }
+            }
+        });
+	
+    });
+</script>

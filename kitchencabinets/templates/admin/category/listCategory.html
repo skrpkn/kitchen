@@ -1,0 +1,129 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/category/list/"  class="active">List All</a></li>
+			<li><a href="/admin/category/reorder/">Reorder</a></li>
+			<li><a href="/admin/category/create/">Add new</a></li>
+	    </ul>
+	</div>
+	{% block mainContent %} 
+		<div class="right-container pull-right">
+			<div class="row-fluid">
+			 	<div class="span12">  
+				    <div class="cutomers-tittle">
+			    		<a class="add-customer" href="/admin/category/create/" title="Add Category"><i class="icon-plus"></i>Add Category</a>
+				      	<h1>Category List</h1>
+				      	{% if messages %}
+			    {% for message in messages %}
+				    <div class="alert alert-block">
+				    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+				    	{{ message }}
+				    </div>
+			    {% endfor %}
+			{% endif %}
+			       	</div>
+			  	</div>  
+<!--		  	uncomment to enable sorting -->
+<!--	  		<div class="span5"> -->
+<!--  				<div class="sort-area">-->
+<!--			    	<p>Sort by</p>-->
+<!--			    	<div class="sort-name">-->
+<!--				        <select>-->
+<!--				        	<option selected>Name</option>-->
+<!--				        	<option>Name</option>-->
+<!--				            <option>Name</option>-->
+<!--				            <option>Name</option>-->
+<!--				        </select>-->
+<!--			   	 	</div>-->
+<!--				    <div class="sort-date">-->
+<!--				         <select>-->
+<!--				        	<option selected>Date</option>-->
+<!--				        	<option>Date</option>-->
+<!--				            <option>Date</option>-->
+<!--				            <option>Date</option>-->
+<!--				        </select>-->
+<!--				    </div>-->
+<!--    			</div>-->
+<!--  			</div> -->
+  			
+			</div>
+  			
+			{% if CategoriesList %}
+				<div class="customers-table">
+					<table class="table">
+			  			<thead>
+					  			<th>{{ form.category_name.label }}</th>
+					  			<th>{{ form.category_status.label }}</th>
+					  			<th>{{ form.category_image.label }}</th>
+					  			<th>&nbsp;</th>
+				  			</tr>
+			  			</thead>
+		  			
+			  			<tbody>
+							{% for category in CategoriesList %}
+								
+									<tr>
+								  		<td>{{ category.category_name|title }}</td>
+								  		<td>{{ category.category_status|title }}</td>
+								  		<td>
+								  			{% if category.category_image	%}
+								  				{% load thumbnail %}<img src="{{ profile.photo|thumbnail_url:'avatar' }}" alt="" />
+								  			{% else %}
+								  				&nbsp;
+								  			{% endif %}
+								  		</td>
+								  		<td>
+								  			<a class="edit" href="/admin/category/edit/{{category.id}}" title="Edit"></a>
+								  			<a class="remove" href="/admin/category/delete/{{category.id}}" title="Delete" onclick="return deleteCategory();"></a>
+							  			</td>
+								  	
+				  					</tr>
+				  			{% endfor %}
+			  			</tbody>
+					</table>
+				</div>
+			{% else %}
+				<div class="alert alert-info">
+					No Categories found. Add one <a title="Add Category" href="/admin/category/create/">now</a>
+				</div>
+			{% endif %}
+		</div>
+	{%endblock%}
+	
+{% include "includes/_footer.html" %}
+
+<script type="text/javascript">
+
+
+
+	function deleteCategory()
+	{
+		if (confirm("All data related to this category will be permanently deleted and cannot be recovered. Are you sure?") == true)
+			{
+			 return true;
+			}
+		else
+			{
+			 return false;
+			}
+	}  
+	
+
+	$(document).ready(function(){ 
+							   
+			$("#droppable-category ul").sortable({ opacity: 0.6, cursor: 'move', update: function() {
+				var order = $(this).sortable("serialize") + '&action=updateRecordsListings'; 
+				$.post("/category/listCategory", order, function(theResponse){
+					// $("#contentRight").html(theResponse);
+				}); 															 
+			}								  
+			});
+	
+	});	
+</script>

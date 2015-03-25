@@ -1,0 +1,103 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/materials/list"  class="active">List All</a></li>
+			<li><a href="/admin/materials/create">Add new</a></li>
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+		<div class="right-container pull-right">
+			<div class="row-fluid">
+			 	<div class="span12">  
+				    <div class="cutomers-tittle">
+			    		<a class="add-customer" href="/admin/materials/create/" title="Add Material"><i class="icon-plus"></i>Add Material</a>
+				      	<h1>Materials List</h1>
+				      	{% if messages %}
+			    {% for message in messages %}
+				    <div class="alert alert-block">
+				    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+				    	{{ message }}
+				    </div>
+			    {% endfor %}
+			{% endif %}
+			       	</div>
+			  	</div>  
+  			
+			</div>
+  			
+			{% if materialsList %}
+				<div class="customers-table">
+					<table class="table">
+			  			<thead>
+					  			<th>{{ form.materials_name.label }}</th>
+					  			<th>{{ form.materials_price.label }}</th>
+					  			<th>{{ form.status.label }}</th>
+					  			<th>{{ form.descriptions.label }}</th>
+					  			<th>&nbsp;</th>
+				  			</tr>
+			  			</thead>
+		  			
+			  			<tbody>
+							{% for materials in materialsList %}
+								
+									<tr>
+								  		<td>{{ materials.name|title }}</td>
+								  		<td>${{ materials.price }}</td>
+								  		<td>{{ materials.status|title }}</td>
+								  		<td>{{ materials.description }}</td>
+								  		<td>
+								  			<a class="edit" href="/admin/materials/edit/{{materials.id}}" title="Edit"></a>
+								  			<a class="remove" href="/admin/materials/delete/{{materials.id}}" title="Delete" onclick="return deleteMaterials();"></a>
+							  			</td>
+								  	
+				  					</tr>
+				  			{% endfor %}
+			  			</tbody>
+					</table>
+				</div>
+			{% else %}
+				<div class="alert alert-info">
+					No materials found. Add one <a title="Add Material" href="/admin/materials/create/">now</a>
+				</div>
+			{% endif %}
+		</div>
+	{%endblock%}
+	
+{% include "includes/_footer.html" %}
+
+<script type="text/javascript">
+
+
+
+	function deleteMaterials()
+	{
+		if (confirm("All data related to this material will be permanently deleted and cannot be recovered. Are you sure?") == true)
+			{
+			 return true;
+			}
+		else
+			{
+			 return false;
+			}
+	}  
+	
+
+	$(document).ready(function(){ 
+							   
+			$("#droppable-material ul").sortable({ opacity: 0.6, cursor: 'move', update: function() {
+				var order = $(this).sortable("serialize") + '&action=updateRecordsListings'; 
+				$.post("/materials/listMaterial", order, function(theResponse){
+					// $("#contentRight").html(theResponse);
+				}); 															 
+			}								  
+			});
+	
+	});	
+</script>

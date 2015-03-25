@@ -1,0 +1,31 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+	   		<div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username }}</p>
+		    </div>
+		{% endif %}
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	
+	
+	<div class="right-container pull-right">
+		
+		
+		<div class="container-fluid welcome-panel">
+      <div class="well">
+          <div class="cutomers-tittle">
+    	<h1>Welcome to Kitchen Cabinets!</h1>
+     </div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt dolore magna aliqua. Ut enim minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt laborum.</p>
+      </div>
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+{% include "includes/_footer.html" %}

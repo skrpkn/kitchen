@@ -1,0 +1,98 @@
+{% include "includes/_header.html" %}
+
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		<ul class="left-nav">
+			<li><a href="/admin/tax/list" class="active">List All</a></li>
+			<li><a href="/admin/tax/create">Add new</a></li>		  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+		<div class="right-container pull-right">
+			<div class="row-fluid">
+			 	<div class="span12">  
+				    <div class="cutomers-tittle">
+				    	<a class="add-customer" href="/admin/tax/create/" title="Add Tax"><i class="icon-plus"></i>Add Tax</a>
+		<h1>Tax List</h1>
+		{% if messages %}
+				    {% for message in messages %}
+					    <div class="alert alert-block">
+					    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+					    	{{ message }}
+					    </div>
+				    {% endfor %}
+				{% endif %}
+		</div>
+		</div></div>
+		{% if taxList %}
+			<div class="customers-table">
+				<table class="table">
+		  			<thead>
+			  			<th>{{ form.tax_name.label }}</th>
+			  			<th>{{ form.tax_rate.label }}</th>
+			  			<th>{{ form.tax_status.label }}</th>
+			  			<th>{{ form.tax_date.label }}</th>
+			  			<th>&nbsp;</th>
+		  			</thead>
+	  			<tbody>
+				{% for tax in taxList %}
+					
+						<tr>
+					  		<td>{{ tax.tax_name|title }}</td>
+					  		<td>{{ tax.tax_rate|title }}%</td>
+					  		<td>{{ tax.tax_status|title }}</td>
+					  		<td>{{ tax.tax_date }}</td>
+					  		
+					  		<td><a class="edit" href="/admin/tax/edit/{{tax.id}}" title="Edit"></a></td>
+					  		<!-- <td><a href="/admin/tax/delete/{{tax.id}}" title="Delete" onclick="return deleteTax();">Delete</a></td>
+					  	 -->
+	  					</tr>
+	  			{% endfor %}
+	  			</tbody>
+			</table>
+		{% else %}
+				<div class="alert alert-info">
+					No Taxes found. Add one <a title="Add Tax" href="/admin/tax/create/">now</a>
+				</div>
+		{% endif %}
+		</div>
+	{%endblock%}
+
+
+
+{% include "includes/_footer.html" %}
+
+<script type="text/javascript">
+
+
+
+	function deleteTax()
+	{
+		if (confirm("This tax will be permanently deleted and cannot be recovered. Are you sure?") == true)
+			{
+			 return true;
+			}
+		else
+			{
+			 return false;
+			}
+	}  
+	
+
+	$(document).ready(function(){ 
+							   
+			$("#droppable-tax ul").sortable({ opacity: 0.6, cursor: 'move', update: function() {
+				var order = $(this).sortable("serialize") + '&action=updateRecordsListings'; 
+				$.post("/tax/listTax", order, function(theResponse){
+					// $("#contentRight").html(theResponse);
+				}); 															 
+			}								  
+			});
+	
+	});	
+</script>

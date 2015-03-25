@@ -1,0 +1,15 @@
+{% if product_image_list%}
+	<ul class="thumbnails">
+		{% for image in product_image_list %}
+		 	<li class="span4">
+			  	<div class="thumbnail">
+				  	<img data-src="{{ image.image_path }}/300x200"  src="{{ image.image_path }}" alt="">
+				  	{% if image.description %}
+				  		<p>{{image.description}}</p>
+				  	{% endif %}
+				  	
+			 	</div>
+			</li>
+		{% endfor %}
+	</ul>
+{% endif	%}

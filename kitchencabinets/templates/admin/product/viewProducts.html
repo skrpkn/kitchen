@@ -1,0 +1,309 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		<ul class="left-nav">
+	     	<li><a href="/admin/product/list" title="product" class="active">List All</a></li>
+			<li><a href="/admin/product/create">Add new</a></li>		  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+		<div class="right-container pull-right">
+			<div class="row-fluid">
+			 	<div class="span12">  
+				    <div class="cutomers-tittle">
+				    	<a href="/admin/product/list/" title="View all products">View All</a>
+						<h3>Product Details</h3> 
+						{% if messages %}
+						    {% for message in messages %}
+							    <div class="alert alert-block">
+							    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+							    	{{ message }}
+							    </div>
+						    {% endfor %}
+						{% endif %}
+						{% if product %}
+							<div class="listing">
+					      	<ul>
+					        	
+					            <li>
+					            	<span>{{ form.product_name.label }}</span>  
+					            	<div>{{ product.product_name}} </div>
+					            </li>
+					            {% if product.cabinet %}
+						            <li>
+						            	<span>{{ form.cabinet.label}}</span>  
+						            	<div>{{ product.cabinet}} </div>
+						            </li>
+					            {% endif %}
+					             {% if product.material %}
+						            <li>
+						            	<span>{{ form.materials.label}}</span>  
+						            	<div>{{ product.material.name|title}} </div>
+						            </li>
+					            {% endif %}
+					            {% if product.category.category_name %}
+					        	<li>
+					            	<span>{{ form.category.label }}</span>
+					            	<div>{{ product.category.category_name|title}}</div>
+					            </li>
+					            {% endif %}
+					            {% if product.sub_category.sub_category_name %}
+					        	<li>
+					            	<span>{{ form.sub_category.label }}</span>
+					            	 <div>{{ product.sub_category.sub_category_name|title}}</div>
+					            </li>
+					            {% endif %}
+					            <li>
+					            	<span>{{ form.product_price.label }}</span>  
+					            	<div>${{ product.product_price}} </div>
+					            </li>
+					            {% if product.short_description %}
+					        	<li>
+					            	<span>{{ form.short_description.label }}</span>
+					            	<div>{{ product.short_description}}</div>
+					            </li>
+					            {% endif %}
+					            {% if product.descriptions %}
+					        	<li>
+					            	<span>{{ form.descriptions.label }}</span>
+					            	 <div>{{ product.descriptions }}</div>
+					            </li>
+					            {% endif %}
+					            {% if taxList.count > 0	%}
+						            <li>
+						            	<span>{{ form.tax.label }}</span> 
+						            	<div>
+							            	{% for single in taxList %} 
+							            		[{{ single.tax.tax_name|title}}]&nbsp; 
+							            	{% endfor	%}
+						            	</div>
+						            </li>
+					            {% endif %}
+					            {% if product.min_height %}
+					        	<li>
+					            	<span>{{ form.min_height.label }}</span>
+					            	<div>{{ product.min_height}}</div>
+					            </li>
+					            {% endif %}
+					            {% if product.max_height %}
+					        	<li>
+					            	<span>{{ form.max_height.label }}</span>
+					            	 <div>{{ product.max_height }}</div>
+					            </li>
+					            {% endif %}
+					            {% if product.height_scale %}
+					        	<li>
+					            	<span>{{ form.height_scale.label }}</span>
+					            	 <div>{{ product.height_scale }}</div>
+					            </li>
+					            {% endif %}
+					            
+					            
+					            {% if product.min_width %}
+					        	<li>
+					            	<span>{{ form.min_width.label }}</span>
+					            	<div>{{ product.min_width}}</div>
+					            </li>
+					            {% endif %}
+					    
+					            {% if product.max_width %}
+					        	<li>
+					            	<span>{{ form.max_width.label }}</span>
+					            	 <div>{{ product.max_width }}</div>
+					            </li>
+					            {% endif %}
+					            {% if product.width_scale %}
+					        	<li>
+					            	<span>{{ form.width_scale.label }}</span>
+					            	 <div>{{ product.width_scale }}</div>
+					            </li>
+					            {% endif %}
+					            
+					            
+					            {% if product.min_depth %}
+					        	<li>
+					            	<span>{{ form.min_depth.label }}</span>
+					            	 <div>{{ product.min_depth }}</div>
+					            </li>
+					            {% endif %}
+					            {% if product.max_depth %}
+					        	<li>
+					            	<span>{{ form.max_depth.label}}</span>
+					            	 <div>{{ product.max_depth }}</div>
+					            </li>
+					            {% endif %}
+					            {% if product.depth_scale %}
+					            <li>
+					            	<span>{{ form.depth_scale.label}}</span>
+					            	 <div>{{ product.depth_scale }}</div>
+					            </li>
+					            {% endif %}
+					            {% if product.discount %}
+					        	<li>
+					            	<span>{{ form.discount.label }} </span>
+					            	 <div>{{ product.discount }}</div>
+					            </li>
+					            {% endif %}
+					            {% if product.is_custom %}
+					        	<li>
+					            	<span>{{ form.is_custom.label }} </span>
+					            	 <div>{{ product.is_custom }}</div>
+					            </li>
+					            {% endif %}
+							{% if product.is_hinges %}
+								<li>
+									<span>{{ form.is_hinges.label }}</span>
+									{% if product.is_hinges == 'Yes'	%}
+										{% if hingesList.count > 0	%}
+											<a href="javascript:void(0);" 
+												data-original-title="Hinges Details" 
+												data-content="{% for single in hingesList %}
+												{{ single.hinges.hinges_name|title }} (Min -{{ single.hinges_min }}, Max -{{ single.hinges_max }})&nbsp;
+											{% endfor %}"
+												id="show-hinges">
+										{% else	%}
+											<a href="javascript:void(0);" id="show-hinges"
+												data-original-title="Hinges Details" 
+												data-content ="No hinges added to this product"
+											>
+										{% endif	%}
+											{{ product.is_hinges }}
+										</a>
+										
+									{% else	%}
+										{{ product.is_hinges}}
+									{% endif %}
+								</li>
+							{% endif %}
+							
+							{% if product.is_drawer %}
+								<li>
+									<span>{{ form.is_drawer.label }}</span>
+									{% if product.is_drawer == 'Yes'	%}
+										{% if drawersList.count > 0	%}
+											<a href="javascript:void(0);" 
+												data-original-title="Drawers Details" 
+												data-content="{% for single in drawersList %}
+												{{ single.drawer.drawer_name|title }} ({{ single.product_drawers_quantity }})&nbsp;
+											{% endfor %}"
+												id="show-drawers">
+										{% else	%}
+											<a href="javascript:void(0);" id="show-drawers"
+												data-original-title="Drawers Details" 
+												data-content ="No Drawer added to this product"
+											>
+										{% endif	%}
+											{{ product.is_drawer }}
+										</a>
+									{% else	%}
+										{{ product.is_drawer}}
+									{% endif %}
+								</li>
+							{% endif %}
+							
+							
+							{% if product.is_door %}
+								<li>
+									<span>{{ form.is_door.label }}</span>
+									{% if product.is_door == 'Yes'	%}
+										{% if doorList.count > 0	%}
+											<a href="javascript:void(0);" 
+												data-original-title="Door Details" 
+												data-content="{% for single in doorList %}
+												{{ single.door.door_name|title }} ({{ single.pieces_count }})&nbsp;
+											{% endfor %}"
+												id="show-doors">
+										{% else	%}
+											<a href="javascript:void(0);" id="show-doors"
+												data-original-title="Doors Details" 
+												data-content ="No Door added to this product"
+											>
+										{% endif	%}
+											{{ product.is_door }}
+										</a>
+									{% else	%}
+										{{ product.is_door}}
+										{% endif %}
+								</li>
+							{% endif %}
+							
+							{% if product.video_url %}
+					        	<li>
+				         		  	<span>Video</span>
+				         		  	<div><a href="#productVideo" data-toggle="modal" title="Click to view video">View</a></div>
+  							  	</li>
+				          	{% endif %}
+				          	{% if product_image_list %}
+				          		<li>
+				          			<span>Images</span>
+				          			<div><a href="#productImages" data-toggle="modal" title="Click to view photos">View</a></div>
+				          		</li>
+				          	{% endif %}
+						</div>
+					</ul>
+					<!--	video modal				-->
+					{% if product.video_url %}
+						<div id="productVideo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="productVideoLabel" aria-hidden="true">
+	         		  		<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h3 id="productVideoLabel">Product Video</h3>
+							</div>
+							<div class="modal-body">
+								<iframe width="530" height="390" src="{{product.video_url}}">
+								</iframe>
+			          		</div>
+			          	</div>
+					{% endif %}          	
+				<!-- images modal						          	-->
+					{% if product_image_list %}
+						<div id="productImages" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="productImagesLabel" aria-hidden="true">
+					     	<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h3 id="productImagesLabel">Product Photos</h3>
+							</div>
+							<div class="modal-body">
+							    <ul class="thumbnails">
+							    	{% for image in product_image_list %}
+								    <li class="span4">
+									    <div class="thumbnail">
+									    	<img data-src="{{ image.image_path }}/300x200"  src="{{ image.image_path }}" alt="">
+									    	{% if image.description %}
+									    		<p>{{image.description}}</p>
+									    	{% endif %}
+								    	</div>
+							    	</li>
+							    	{% endfor %}
+							    </ul>
+						   	</div>
+					   	</div>
+   				 	{% endif %}
+    
+			     </div>
+					{% else %}
+							<div class="alert alert-info">
+								This product is no longer available. Back to <a title="Back to listing" href="/admin/product/list/">listing</a>.
+							</div>
+					{% endif %}
+		
+	{%endblock%}
+	
+</div>
+
+
+
+{% include "includes/_footer.html" %}
+
+
+<script type="text/javascript">
+	$(function() {
+		$('#show-drawers').popover();
+		$('#show-hinges').popover();
+		$('#show-doors').popover();
+	});
+	
+</script>

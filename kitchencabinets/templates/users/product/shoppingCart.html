@@ -1,0 +1,115 @@
+{% include "includes/header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	 </div>
+	{% block mainContent %} 
+		<div class="right-container pull-right">
+			<div class="row-fluid">
+				<div class="span12">  
+				    <div class="cutomers-tittle">
+				      	<h1>Shopping Cart</h1>
+				      	{% if messages %}
+				    		{% for message in messages %}
+					    		<div class="alert alert-block">
+					    			<button type="button" class="close" data-dismiss="alert">&times;</button>
+					    			{{ message }}
+					    		</div>
+				    		{% endfor %}
+						{% endif %}
+			       	</div>
+		  		</div> 
+			</div> 
+			{% if request.session.cart %}
+			<form class="form-horizontal"  id="frmaddCart" name="frmaddCart" method="post">
+				{% csrf_token %}
+			
+					<div class="product_list">
+						<table class="table">
+							<thead>
+								<th>Product Name</th>
+								<th>Prize</th>
+								<th>Quantity</th>
+								<th>Total Price</th>
+							</thead>
+							<tbody  id="cart-table">
+								{% for data in request.session.cart %}
+									<tr id="product-{{forloop.counter}}">
+										<td>{{data.product_name}}</td>
+										<td>{{data.price}}</td>
+										<td><input type="text" name="qty{{forloop.counter0}}" value="{{data.quantity}}"></td>
+										<td><input type="hidden" name="ids{{forloop.counter0}}" value="{{data.id}}"></td>
+										<td>{{data.total_price}}</td>
+										<td>
+											<a rel="{{forloop.counter}}" id="{{data.id}}" class="remove remove-from-cart" href="javascript:void(0);" title="Remove this item">
+											</a>
+										</td>
+									</tr>
+									<input type="hidden" name="count" value="{{forloop.counter}}">
+								{% endfor %}
+							</tbody>
+					  	</table>
+					  	<div class="control-group">
+							<label></label>
+							<div class="controls">
+								
+									<a href="/list" title="Continue Shopping" >Continue Shopping</a>
+									<button type="submit" class="add-customer" name="empty" >Empty Cart</button>
+									<button type="submit" class="add-customer" name="update" >Update</button>
+									<button type="submit" class="add-customer" name="checkout" >Check Out</button>
+							</div>
+						</div>
+			  		</div>
+				</form>
+				<div class="alert alert-info hide" id="empty-cart">
+					No products in your cart. Shop <a href="/list" title="Continue Shopping" >now</a>
+				</div>
+			 {%else	%}
+			 	<div class="alert alert-info">
+					No products in your cart. Shop <a href="/list" title="Continue Shopping" >now</a>
+				</div>
+				
+				
+			 {%endif%}
+		</div> 
+		
+	{%endblock%}
+	
+{% include "includes/footer.html" %}
+<script type="text/javascript">
+	var isActive = false;
+	$(function() {
+		// add to cart
+		$(".remove-from-cart").click(function(e){
+			// prevent submit
+			e.preventDefault();
+			if(isActive)
+				return;
+			
+			isActive = true;
+			var currentElm = $(this).attr('rel');
+			var currentId = $(this).attr('id');
+			if(currentId){
+				$.ajax({
+					type: "POST",
+					url: "/product/remove-from-cart/",
+					data: "id="+currentId+"&flag="+Math.random()
+				}).done(function( msg ) {
+					$('#product-'+currentElm).remove();
+					var rowCount = $('#cart-table tr').length;
+					if(rowCount == 0){
+						$('#frmaddCart').remove();
+						$('#empty-cart').removeClass('hide');
+					}
+				});
+			}else{
+				alert('Something went wrong')
+			}
+			isActive = false
+		});
+	});
+</script>

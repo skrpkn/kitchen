@@ -1,0 +1,118 @@
+{% include "includes/_header.html" %}
+
+	<div class="left-container pull-left">
+	      
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/subcategory/list" class="active">List All</a></li>
+			<li><a href="/admin/subcategory/create">Add new</a></li>
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	
+	{% block mainContent %} 
+		<div class="right-container pull-right">
+			<div class="row-fluid">
+				<div class="span12">  
+				    <div class="cutomers-tittle">
+			    		<a class="add-customer" href="/admin/subcategory/create/" title="Add Subcategory"><i class="icon-plus"></i>Add Subcategory</a>
+				      	<h1>Subcategory List</h1>
+				      	{% if messages %}
+				    {% for message in messages %}
+					    <div class="alert alert-block">
+					    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+					    	{{ message }}
+					    </div>
+				    {% endfor %}
+				{% endif %}
+			       	</div>
+			  	</div>
+			  </div>
+			{% if subCategories %}
+				<div class="customers-table">
+			 		<table class="table">
+			  			<thead>
+				  			<th>{{ form.sub_category_name.label }}</th>
+				  			<th>{{ form.category.label }}</th>
+				  			<th>{{ form.sub_category_status.label }}</th>
+				  			<th>&nbsp;</th>
+			  			</thead>
+			  			<tbody>
+						{% for subcategory in subCategories.object_list %}
+							
+								<tr>
+							  		<td>{{ subcategory.sub_category_name|title }}</td>
+							  		<td>{{ subcategory.category.category_name|title }}</td>
+							  		<td>{{ subcategory.sub_category_status|title }}</td>
+							  		<td>
+							  			<a class="edit" href="/admin/subcategory/edit/{{subcategory.id}}" title="Edit"></a>
+							  			<a class="remove" href="/admin/subcategory/delete/{{subcategory.id}}" title="Delete" onclick="return deleteSubCategory();"></a>
+						  			</td>
+			  					</tr>
+			  			{% endfor %}
+			  			</tbody>
+					</table>
+				</div>
+				<div class="pagination pagination-right">
+				    <ul>
+				        {% if subCategories.has_previous %}
+				          <li class="previous-page">  <a href="?page={{ subCategories.previous_page_number }}">
+				          	<i class="icon-arrow-prev"></i></a>
+				          </li>
+				        {% endif %}
+            			<li class="disabled"> <a>Page {{ subCategories.number }} of {{ subCategories.paginator.num_pages }}</a></li> 
+				        {% if subCategories.has_next %}
+				           <li class="next-page"> <a href="?page={{ subCategories.next_page_number }}">
+				           	<i class="icon-arrow-next"></i></a>
+				           </li>
+				        {% endif %}
+				    </ul>
+				</div>
+		{% else %}
+				<div class="alert alert-info">
+					No Subcategories found. Add one <a title="Add Subcategory" href="/admin/subcategory/create/">now</a>
+				</div>
+		{% endif %}
+	</div>
+	{%endblock%}
+	
+{% include "includes/_footer.html" %}
+
+
+<script type="text/javascript">
+
+
+
+	function deleteSubCategory()
+	{
+		if (confirm("All data related to this subcategory will be permanently deleted and cannot be recovered. Are you sure?") == true)
+			{
+			 return true;
+			}
+		else
+			{
+			 return false;
+			}
+	}  
+	
+	
+
+$(document).ready(function(){ 
+						   
+	$(function() {
+		$("#droppable-category ul").sortable({ opacity: 0.6, cursor: 'move', update: function() {
+			var order = $(this).sortable("serialize") + '&action=updateRecordsListings'; 
+			$.post("/subCategory/listSubCategory", order, function(theResponse){
+				// $("#contentRight").html(theResponse);
+			}); 															 
+		}								  
+		});
+	});
+
+	});	
+</script>

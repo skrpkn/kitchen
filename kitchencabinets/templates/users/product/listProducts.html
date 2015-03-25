@@ -1,0 +1,131 @@
+{% include "includes/header.html" %}
+{% load range_tags %}
+{% load productphotos_tags %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/list" title="product" class="active">List All</a></li>
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+	
+		<div class="row-fluid">
+			
+			<div class="span12">  
+			    <div class="cutomers-tittle">
+		    		
+			      	<h1>Products List</h1>
+			      	{% if messages %}
+			    {% for message in messages %}
+				    <div class="alert alert-block">
+				    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+				    	{{ message }}
+				    </div>
+			    {% endfor %}
+			{% endif %}
+		       	</div>
+	  		</div> 
+		</div> 
+	
+		{% if ProductList %}
+			<div class="product_list">
+					{% for product in ProductList.object_list %}
+						<div class="title">
+							{{ product.product_name }}
+						</div>
+						<div class="product_image">
+<!--							{% productphotos product  %}-->
+				  		</div>
+	  					<table class="table">
+	  						<thead>
+		  						<th>Width</th>
+		  						<th>Height</th>
+		  						<th>Depth</th>
+		  						<th>Total Price</th>
+		  						<th>&nbsp;</th>
+		  					</thead>
+		  					<tbody>
+	  							{% ranges product %}
+	  							
+			  				</tbody>
+	  					
+	  					</table>
+	  					<div class="details-button">
+							<!-- Button to trigger modal -->
+							<a href="#product-details-{{ product.id }}" role="button" data-toggle="modal" title="Show product details">Details</a>
+						</div>
+						
+						<!-- Start Modal -->
+							<div id="product-details-{{ product.id }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="details-label-{{ product.id }}" aria-hidden="true">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+									<h3 id="details-label-{{ product.id }}">{{ product.product_name }}</h3>
+								</div>
+								<div class="modal-body">
+						            {% if product.descriptions %}
+						            	<h5>Product Description</h5>
+						            	<p>{{ product.descriptions }}</p>
+						            {% endif %}
+						            {% if product.material.description %}
+						            	<h5>Material Description</h5>
+						            	<p>{{ product.material.description }}</p>
+						            {% endif %}
+									<!--		products photos			            -->
+						            {% productphotos product %}
+						            {% if product.video_url %}
+						            	<iframe width="530" height="390" src="{{product.video_url}}">
+										</iframe>
+						            {% endif %}
+								</div>
+							</div>
+						<!-- End Modal -->
+
+		  			{% endfor %}
+			</div>
+			<div class="pagination pagination-right">
+			    <ul>
+			        {% if ProductList.has_previous %}
+			          <li class="previous-page">  <a href="?page={{ ProductList.previous_page_number }}">
+			          	<i class="icon-arrow-prev"></i></a>
+			          </li>
+			        {% endif %}
+           			<li class="disabled"> <a>Page {{ ProductList.number }} of {{ ProductList.paginator.num_pages }}</a></li> 
+			        {% if ProductList.has_next %}
+			           <li class="next-page"> <a href="?page={{ ProductList.next_page_number }}">
+			           		<i class="icon-arrow-next"></i></a>
+			           </li>
+			        {% endif %}
+			    </ul>
+			</div>
+		{% endif %}
+	</div>
+	{%endblock%}
+	
+{% include "includes/footer.html" %}
+
+<script type="text/javascript">
+
+	$(function() {
+		// add to cart
+		$(".add-to-cart").click(function(e){
+			// prevent submit
+			e.preventDefault();
+			// $(this).parent("form").find("img").removeClass('hide');
+			$.ajax({
+				type: "POST",
+				url: "/product/mycart/",
+				data: $(this).parent("form").find(":input").serialize()+"&flag="+Math.random()
+			}).done(function( msg ) {
+				console.log('Cart id'+msg);
+			});
+		
+		});
+	});
+</script>

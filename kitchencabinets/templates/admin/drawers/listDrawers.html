@@ -1,0 +1,102 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/drawers/list" class="active">List All</a></li>
+			<li><a href="/admin/drawers/create">Add new</a></li>		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+		<div class="row-fluid">
+			
+			<div class="span12">  
+			    <div class="cutomers-tittle">
+		    		<a class="add-customer" href="/admin/drawers/create/" title="Add Drawer">
+						<i class="icon-plus"></i>Add Drawer
+					</a>
+					
+			      	<h1>Drawers List</h1>
+			      	{% if messages %}
+			    {% for message in messages %}
+				    <div class="alert alert-block">
+				    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+				    	{{ message }}
+				    </div>
+			    {% endfor %}
+			{% endif %}
+		       	</div>
+	  		</div> 
+		</div> 
+	
+		{% if drawersList %}
+			<div class="customers-table">
+				<table class="table">
+		  			<thead>
+			  			<th>{{ form.drawer_name.label }}</th>
+			  			<th>{{ form.drawer_unit_price.label }}</th>
+			  			<th>&nbsp;</th>
+		  			</thead>
+		  			<tbody>
+					{% for drawers in drawersList.object_list %}
+						
+							<tr>
+						  		<td>{{ drawers.drawer_name|title }}</td>
+						  		<td>${{ drawers.drawer_unit_price }}</td>
+						  		<td>
+						  			<a href="/admin/drawers/edit/{{drawers.id}}" class="edit" title="Edit"></a>
+						  			<a href="/admin/drawers/delete/{{drawers.id}}" class="remove" title="Delete" onclick="return deleteDrawers();"></a>
+						  		</td>
+						  	
+		  					</tr>
+		  			{% endfor %}
+		  			</tbody>
+				</table>
+			</div> 
+			<div class="pagination pagination-right">
+			    <ul>
+			        {% if drawersList.has_previous %}
+			          <li class="previous-page">  <a href="?page={{ drawersList.previous_page_number }}">
+			          	<i class="icon-arrow-prev"></i></a>
+			          </li>
+			        {% endif %}
+           			<li class="disabled"> <a>Page {{ drawersList.number }} of {{ drawersList.paginator.num_pages }}</a></li> 
+			        {% if drawersList.has_next %}
+			           <li class="next-page"> 
+			           		<a href="?page={{ drawersList.next_page_number }}">
+			           		<i class="icon-arrow-next"></i></a>
+			           </li>
+			        {% endif %}
+			    </ul>
+			</div>
+		{% else %}
+				<div class="alert alert-info">
+					No drawer found. Add one <a title="Add Drawer" href="/admin/drawers/create/">now</a>
+				</div>
+		{% endif %}
+	</div>
+	{%endblock%}
+
+{% include "includes/_footer.html" %}
+
+<script type="text/javascript">
+
+	function deleteDrawers()
+	{
+		if (confirm("This item will be permanently deleted and cannot be recovered. Are you sure?") == true)
+			{
+			 return true;
+			}
+		else
+			{
+			 return false;
+			}
+	}  
+	
+</script>

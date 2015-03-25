@@ -1,0 +1,87 @@
+{% include "includes/_header.html" %}
+	<div class="left-container pull-left">
+	   	{% if user.is_authenticated %}
+		    <div class="login-area">
+		    	<p><a href="/logout/" title="Logout">Logout</a> <span>Welcome</span> {{ user.username|title }}</p>
+		    </div>
+		{% endif %}
+		
+	    <ul class="left-nav">
+	     	<li><a href="/admin/cabinet/list">List All</a></li>
+			<li><a href="/admin/cabinet/create" class="active">Add new</a></li>	  		
+	    </ul>
+	    <p class="copy">&copy; {% now "Y" %} Kitchen Cabinets</p>
+	</div>
+	{% block mainContent %} 
+	<div class="right-container pull-right">
+	
+		<div class="cutomers-tittle form-title">
+			<h1>{% if flag %} Edit {%else%}Add {% endif %} Cabinet</h1>
+			{% if messages %}
+			    {% for message in messages %}
+			    <div class="alert alert-block">
+			    	<button type="button" class="close" data-dismiss="alert">&times;</button>
+			    	{{ message }}
+			    </div>
+			    {% endfor %}
+			{% endif %}
+		</div>
+		<div class="row-fluid">
+			<div class="span8">
+				<form action="." class="form-horizontal" id="frmcreateCabinet" name="frmcreateCabinet" method="post">{% csrf_token %}
+					<div class="control-group">
+						<label class="control-label" for="hinges_name">{{ form.cabinet_name.label}}<span>*</span></label>
+						<div class="controls">
+							{{ form.cabinet_name }}
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="cabinet_formula" class="control-label">Cabinet Formula</label>
+						<div class="controls">
+							<select multiple name="formula" id="formula" class="multiple">
+									<option value="width"
+										{% if cabinetList.width == 1 %}
+											selected="selected"
+										{% endif %}
+									>Width</option>
+									<option value="height"
+										{% if cabinetList.height == 1 %}
+											selected="selected"
+										{% endif %}
+									>Height</option>
+									<option value="depth"
+										{% if cabinetList.depth == 1 %}
+											selected="selected"
+										{% endif %}
+									>Depth</option>
+							</select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label></label>
+						<button type="submit" class="add-customer">Save</button>
+						<span>or</span>  
+						<a href="/admin/cabinet/list/" title="Back to listing">Back</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	{% endblock %}
+	
+{% include "includes/_footer.html" %}
+
+
+<script>
+    $(document).ready(function () {
+        $('#frmcreateCabinet').validate({ // initialize the plugin
+            rules: {
+        		cabinet_name: {
+                    required: true,
+                    exactlength: 45
+                },
+            }
+        });
+	
+    });
+</script>

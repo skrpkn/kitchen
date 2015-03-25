@@ -1,0 +1,62 @@
+		<!-- Le javascript
+   		 ================================================== -->
+	    <!-- Placed at the end of the document so the pages load faster -->
+	    
+	   
+		<!--    validations plugin -->
+	    <script src="{{ STATIC_URL }}js/jquery.validate.min.js"></script>
+	    <!--    validations addtional methods -->
+	    <script src="{{ STATIC_URL }}js/additional-methods.js"></script>
+		<!--    drag and drop-->
+	    <script src="{{ STATIC_URL }}js/bootstrap.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
+
+		<!--    custom functions-->
+	    <script src="{{ STATIC_URL }}js/custom.js"></script>
+	    
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('.nav>li:last-child').addClass('last-child');
+				$('.sub-elements-rows .sub-elements:nth-child(3)').addClass('sub-elements-last-child');
+				
+				$('ul.header-nav li').hover(function(){
+					$(this).find('ul').stop(true, true).slideDown();
+					$(this).addClass('active');
+				}, function(){
+					$(this).find('ul').stop(true, true).slideUp(10);
+		 				$(this).removeClass('active');
+		 			
+				});
+				
+				$("tr").each(function(i) {
+		     		//$(this).find("td").each(function(i) {
+		    		//$(this).addClass("td-item-" + (i+1));
+		    	//});
+			  });
+				$("tr td:last-child").addClass('td-item-6');
+				
+				$("tr").each(function(i) {
+		     		//$(this).find("td").each(function(i) {
+		    		//$(this).addClass("td-item-" + (i+1));
+		    	//});
+			  });
+			  
+			  $("tr").each(function(i) {
+		     		//$(this).find("th").each(function(i) {
+		    		//$(this).addClass("th-item-" + (i+1));
+		    	//});
+			  });
+		 	});
+			
+			
+			 
+			$(window).load(function (){
+				$('.left-container').css(  {   "min-height" : $(document).height() - ( $('header').height() + 92)   } );
+		 	});
+			$(window).resize(function(){
+				$('.left-container').css(  {   "min-height" : $(document).height() - ( $('header').height() + 92)  } );
+		 	});
+		</script>
+	</body>
+</html>
